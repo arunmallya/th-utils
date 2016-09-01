@@ -11,10 +11,11 @@ end
 
 
 function embedding_utils.word2vec(w2v, sentence, opts)
+  opts = opts or {}
   local average = opts.average or false
   local normalize = opts.normalize or false
 
-  local vector = torch.Tensor(300):zero()
+  local vector = torch.FloatTensor(300):zero()
   local num_words = 0
   local eps = 1e-9
   for word in sentence:gmatch('%w+') do 

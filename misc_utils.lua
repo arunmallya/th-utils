@@ -1,6 +1,96 @@
 local cjson = require 'cjson'
+require 'gnuplot'
+
 
 local utils = {}
+
+
+function utils.plotAccuracy(results_history, filename)
+  local num_vals = utils.count_keys(results_history)
+  local x = torch.Tensor(num_vals)
+  local y = torch.Tensor(num_vals)
+  local i = 1
+  for k, v in pairs(results_history) do
+    x[i] = k
+    y[i] = v
+    i = i + 1
+  end
+  -- Sort by x axis.
+  x_val, index = torch.sort(x)
+  y_val = y:index(1, index)
+
+  gnuplot.pngfigure(filename .. '.png')
+  -- gnuplot.plot('Accuracy', x_val, y_val, ' using 1:2:(sprintf("(%d, %d)", $1, $2)) with labels ')
+  gnuplot.plot('Accuracy', x_val, y_val)
+  gnuplot.raw('using 0:2:1 with labels offset 0,char 1')
+  gnuplot.xlabel('Iteration')
+  gnuplot.ylabel('Accuracy')
+  gnuplot.plotflush()
+end
+
+
+function utils.getLearningRate(opt, iter)
+  if opt.decay_type == 'fixed' then
+    return opt.base_lr
+  elseif opt.decay_type == 'step' then
+    return opt.base_lr * math.pow(opt.gamma, math.floor(iter / opt.step))
+  elseif opt.decay == 'exp' then
+    return opt.base_lr * math.pow(opt.gamma, iter)
+  end
+end
+
+
+function utils.findArgMaxBatch(vals, num_in_batch)
+--[[ 
+values is of size num_in_batch*N x 1.
+Finds the index with max value in every num_in_batch x 1 vector.
+--]]
+  local values = vals:clone()
+  values = torch.squeeze(values)
+
+  assert(values:size(1) % num_in_batch == 0)
+  local num_batches = values:size(1) / num_in_batch
+  local output = torch.Tensor(num_batches):zero()
+
+  for i = 1, num_batches do
+    local start_index = (i-1)*num_in_batch + 1
+    local end_index = start_index + num_in_batch - 1 
+    local batch = values[{{start_index, end_index}}]
+    local _, max_ind = torch.max(batch, 1)
+    output[i] = max_ind[1]
+  end
+
+  return output
+end
+
+
+function utils.deepcopy(orig)
+  local orig_type = type(orig)
+  local copy
+  if orig_type == 'table' then
+      copy = {}
+      for orig_key, orig_value in next, orig, nil do
+          copy[utils.deepcopy(orig_key)] = utils.deepcopy(orig_value)
+      end
+      setmetatable(copy, utils.deepcopy(getmetatable(orig)))
+  else -- number, string, boolean, etc
+      copy = orig
+  end
+  return copy
+end
+
+
+function utils.find_key_of_value_in_table(table, value)
+--[[ Finds simple value (number, string, boolean, etc.) and returns key if 
+found in table. This returns the first occurrence.
+--]]
+  for k, v in pairs(table) do
+    if v == value then
+      return k
+    end
+  end
+  return nil
+end
 
 
 --[[

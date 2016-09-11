@@ -1,3 +1,5 @@
+-- code adapted from https://github.com/jcjohnson/densecap
+
 local cjson = require 'cjson'
 require 'gnuplot'
 

@@ -1,3 +1,4 @@
+-- code adapted from https://github.com/jcjohnson/densecap
 
 function sgd(x, dx, lr)
   x:add(-lr, dx)

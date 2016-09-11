@@ -5,7 +5,7 @@ require 'gnuplot'
 local utils = {}
 
 
-function utils.plotAccuracy(results_history, filename)
+function utils.makePlotTensor(results_history)
   local num_vals = utils.count_keys(results_history)
   local x = torch.Tensor(num_vals)
   local y = torch.Tensor(num_vals)
@@ -19,6 +19,13 @@ function utils.plotAccuracy(results_history, filename)
   x_val, index = torch.sort(x)
   y_val = y:index(1, index)
 
+  return x_val, y_val
+end
+
+
+function utils.plotAccuracy(results_history, filename)
+  x_val, y_val = utils.makePlotTensor(results_history)
+  
   gnuplot.pngfigure(filename .. '.png')
   -- gnuplot.plot('Accuracy', x_val, y_val, ' using 1:2:(sprintf("(%d, %d)", $1, $2)) with labels ')
   gnuplot.plot('Accuracy', x_val, y_val)

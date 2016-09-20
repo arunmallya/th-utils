@@ -1,5 +1,4 @@
 -- code adapted from https://github.com/jcjohnson/densecap
-
 require 'cutorch'
 require 'cunn'
 require 'nnx'

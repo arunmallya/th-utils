@@ -1,5 +1,3 @@
--- code adapted from https://github.com/jcjohnson/densecap
-
 local cjson = require 'cjson'
 require 'gnuplot'
 
@@ -27,7 +25,7 @@ end
 
 function utils.plotAccuracy(results_history, filename)
   x_val, y_val = utils.makePlotTensor(results_history)
-  
+
   gnuplot.pngfigure(filename .. '.png')
   -- gnuplot.plot('Accuracy', x_val, y_val, ' using 1:2:(sprintf("(%d, %d)", $1, $2)) with labels ')
   gnuplot.plot('Accuracy', x_val, y_val)
@@ -250,6 +248,26 @@ function utils.table_to_str(tbl)
     str = str .. tostring(k) .. '=' .. tostring(v) .. ', '
   end
   return str:sub(1, (#str)-2)
+end
+
+-- From https://github.com/torch/xlua/blob/master/init.lua.
+function utils.split_string(str, pat)
+   local t = {}  -- NOTE: use {n = 0} in Lua-5.0
+   local fpat = "(.-)" .. pat
+   local last_end = 1
+   local s, e, cap = str:find(fpat, 1)
+   while s do
+      if s ~= 1 or cap ~= "" then
+         table.insert(t,cap)
+      end
+      last_end = e+1
+      s, e, cap = str:find(fpat, last_end)
+   end
+   if last_end <= #str then
+      cap = str:sub(last_end)
+      table.insert(t, cap)
+   end
+   return t
 end
 
 -- Stash global statistics here.

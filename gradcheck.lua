@@ -1,5 +1,3 @@
--- code adapted from https://github.com/jcjohnson/densecap
-
 local gradcheck = {}
 
 

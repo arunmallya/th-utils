@@ -4,6 +4,23 @@ require 'gnuplot'
 
 local utils = {}
 
+-- From http://svn.wildfiregames.com/public/ps/trunk/build/premake/premake4/src/base/table.lua.
+function utils.flatten_table(arr)
+  local result = { }
+  
+  local function flatten(arr)
+    for _, v in ipairs(arr) do
+      if type(v) == "table" then
+        flatten(v)
+      else
+        table.insert(result, v)
+      end
+    end
+  end
+  
+  flatten(arr)
+  return result
+end
 
 function utils.makePlotTensor(results_history)
   local num_vals = utils.count_keys(results_history)

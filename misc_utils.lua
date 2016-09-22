@@ -4,9 +4,23 @@ require 'gnuplot'
 
 local utils = {}
 
+
+-- Convert a table containing tensors to the required dtype.
+function utils.dtype(arr, dtype)
+  local result = {}
+  
+  for _, v in ipairs(arr) do
+    local val = v:type(dtype)
+    table.insert(result, val)
+  end
+
+  return result
+end
+
+
 -- From http://svn.wildfiregames.com/public/ps/trunk/build/premake/premake4/src/base/table.lua.
 function utils.flatten_table(arr)
-  local result = { }
+  local result = {}
   
   local function flatten(arr)
     for _, v in ipairs(arr) do

@@ -9,9 +9,9 @@ local utils = {}
 function utils.dtype(arr, dtype)
   local result = {}
   
-  for _, v in ipairs(arr) do
+  for k, v in pairs(arr) do
     local val = v:type(dtype)
-    table.insert(result, val)
+    result[k] = val
   end
 
   return result
@@ -35,6 +35,7 @@ function utils.flatten_table(arr)
   flatten(arr)
   return result
 end
+
 
 function utils.makePlotTensor(results_history)
   local num_vals = utils.count_keys(results_history)

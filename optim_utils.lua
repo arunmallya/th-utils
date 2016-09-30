@@ -1,10 +1,11 @@
+local optim_utils = {}
 
-function sgd(x, dx, lr)
+function optim_utils.sgd(x, dx, lr)
   x:add(-lr, dx)
 end
 
 
-function sgdm(x, dx, lr, alpha, state)
+function optim_utils.sgdm(x, dx, lr, alpha, state)
   -- sgd with momentum, standard update
   if not state.v then
     state.v = x.new(#x):zero()
@@ -15,7 +16,7 @@ function sgdm(x, dx, lr, alpha, state)
 end
 
 
-function sgdmom(x, dx, lr, alpha, state)
+function optim_utils.sgdmom(x, dx, lr, alpha, state)
   -- sgd momentum, uses nesterov update (reference: http://cs231n.github.io/neural-networks-3/#sgd)
   if not state.m then
     state.m = x.new(#x):zero()
@@ -27,7 +28,7 @@ function sgdmom(x, dx, lr, alpha, state)
   x:add(1+alpha, state.m)
 end
 
-function adagrad(x, dx, lr, epsilon, state)
+function optim_utils.adagrad(x, dx, lr, epsilon, state)
   if not state.m then
     state.m = x.new(#x):zero()
     state.tmp = x.new(#x)
@@ -40,7 +41,7 @@ function adagrad(x, dx, lr, epsilon, state)
 end
 
 -- rmsprop implementation, simple as it should be
-function rmsprop(x, dx, lr, alpha, epsilon, state)
+function optim_utils.rmsprop(x, dx, lr, alpha, epsilon, state)
   if not state.m then
     state.m = x.new(#x):zero()
     state.tmp = x.new(#x)
@@ -53,7 +54,7 @@ function rmsprop(x, dx, lr, alpha, epsilon, state)
   x:addcdiv(-lr, dx, state.tmp)
 end
 
-function adam(x, dx, lr, beta1, beta2, epsilon, state)
+function optim_utils.adam(x, dx, lr, beta1, beta2, epsilon, state)
   local beta1 = beta1 or 0.9
   local beta2 = beta2 or 0.999
   local epsilon = epsilon or 1e-8
@@ -82,3 +83,5 @@ function adam(x, dx, lr, beta1, beta2, epsilon, state)
   -- perform update
   x:addcdiv(-stepSize, state.m, state.tmp)
 end
+
+return optim_utils

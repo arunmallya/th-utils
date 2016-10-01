@@ -68,13 +68,13 @@ function utils.plotAccuracy(results_history, filename)
 end
 
 
-function utils.getLearningRate(opt, iter)
-  if opt.decay_type == 'fixed' then
-    return opt.base_lr
-  elseif opt.decay_type == 'step' then
-    return opt.base_lr * math.pow(opt.gamma, math.floor(iter / opt.step))
-  elseif opt.decay == 'exp' then
-    return opt.base_lr * math.pow(opt.gamma, iter)
+function utils.getLearningRate(decay_type, base_lr, iter, decay_opts)
+  if decay_type == 'fixed' then
+    return base_lr
+  elseif decay_type == 'step' then
+    return base_lr * math.pow(decay_opts.gamma, math.floor(iter / decay_opts.step))
+  elseif decay == 'exp' then
+    return base_lr * math.pow(decay_opts.gamma, iter)
   end
 end
 
